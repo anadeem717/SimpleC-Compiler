@@ -46,7 +46,7 @@ module parser =
 
   
   // Checks to see if the literal string starts with the given pattern
-  let beginsWith (pattern: string) (literal: string) = 
+  let private beginsWith (pattern: string) (literal: string) = 
     literal.StartsWith (pattern)
 
   
@@ -54,7 +54,7 @@ module parser =
   // If the next token begins with the given pattern,
   // then it is valid to match and <tokens> can be updated
   // so we just return the tail
-  let rec matchTokenSpecial pattern tokens =
+  let rec private matchTokenSpecial pattern tokens =
     let next_token = List.head tokens
 
     if beginsWith pattern next_token then  
@@ -65,13 +65,13 @@ module parser =
 
 
   // Matches a ';' character and returns updated <tokens>
-  let empty tokens = 
+  let private empty tokens = 
     matchToken ";" tokens
      
 
 
   // Matches a "int identifier;" case and returns updated <tokens>
-  let vardecl tokens = 
+  let private vardecl tokens = 
     let T2 = matchToken "int" tokens
 
     // special case: the token must contain "identifier"
@@ -81,7 +81,7 @@ module parser =
 
 
   // Matches a "cin >> identifier" case and returns updated <tokens>
-  let input tokens = 
+  let private input tokens = 
     let T2 = matchToken "cin" tokens
     let T3 = matchToken ">>" T2
 
@@ -92,7 +92,7 @@ module parser =
 
 
   // Matches a "cout << <output-value>" case and returns updated <tokens>
-  let rec output tokens = 
+  let rec private output tokens = 
     let T2 = matchToken "cout" tokens
     let T3 = matchToken "<<" T2
     let T4 = output_value T3
@@ -101,7 +101,7 @@ module parser =
 
 
   // Matches a "<expr-value> || endl" case, returns updated <tokens>
-  and output_value tokens = 
+  and private output_value tokens = 
     let next_token = List.head tokens
 
     // endl case
@@ -114,7 +114,7 @@ module parser =
 
   // Matches the given token to one of the expr value patterns
   // and updates <tokens> accordingly
-  and expr_value token tokens = 
+  and private expr_value token tokens = 
     if beginsWith "identifier" token then
       matchTokenSpecial "identifier" tokens
 
@@ -137,13 +137,13 @@ module parser =
   
   // Matches <expr> case
   // returns updated <tokens>
-  and condition tokens = 
+  and private condition tokens = 
     expr tokens
 
 
   // Matches the <expr-value> <expr-op> <expr-value> || <expr-value> case
   // returns updated <tokens>
-  and expr tokens = 
+  and private expr tokens = 
     // match the expr value
     let T2 = expr_value (List.head tokens) tokens
 
@@ -158,7 +158,7 @@ module parser =
 
   // Matches a expr operator
   // return the updated <tokens>
-  and expr_op tokens = 
+  and private expr_op tokens = 
     let next_token = List.head tokens
 
     match next_token with
@@ -179,7 +179,7 @@ module parser =
 
   // Checks to see if the next token is possibly a operator
   // returns true if it is an expr op, else false
-  and check_op tokens = 
+  and private check_op tokens = 
     let next_token = List.head tokens
 
     // token is a valid op
@@ -194,7 +194,7 @@ module parser =
   
   // Matches a "identifier = <expr>" case
   // returns updated <tokens>
-  let assignment tokens = 
+  let private assignment tokens = 
     // special case: the token must contain "identifier" 
     let T2 = matchTokenSpecial "identifier" tokens
 
@@ -209,7 +209,7 @@ module parser =
 
   // Logic for <stmt>
   // Chooses a path depending on the next token
-  let rec stmt tokens = 
+  let rec private stmt tokens = 
     let next_token = List.head tokens
 
     // find matching path
@@ -230,14 +230,14 @@ module parser =
 
   // Matches a <stmt> for the then-part
   // returns updated <tokens>
-  and then_part tokens = 
+  and private then_part tokens = 
     stmt tokens
 
 
 
   // Matches "else <stmt>" case || epsilon case
   // returns updated <tokens>
-  and else_part tokens = 
+  and private else_part tokens = 
     let next_token = List.head tokens
 
     // if the next token is "else"
@@ -251,7 +251,7 @@ module parser =
 
 
   // Matches an <ifstmt> and returns updated <tokens>
-  and ifstmt tokens = 
+  and private ifstmt tokens = 
     let T2 = matchToken "if" tokens
     let T3 = matchToken "(" T2
 
@@ -270,7 +270,7 @@ module parser =
 
   // Sees of an additional <stmt> is possible
   // If not, can just return <tokens> as it is optional
-  let rec morestmts tokens = 
+  let rec private morestmts tokens = 
     let next_token = List.head tokens
 
     // if next_token is possibly a <stmt> then call <stmt>

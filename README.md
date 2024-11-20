@@ -1,4 +1,4 @@
-# README: SimpleC Parser  
+# SimpleC Compiler  
 
 ## Overview  
 This project is a parser for SimpleC programs, implemented in F#. The parser checks the syntax of input programs to ensure they conform to the rules of the SimpleC language. It processes tokens and validates their order and structure according to a defined grammar.  
